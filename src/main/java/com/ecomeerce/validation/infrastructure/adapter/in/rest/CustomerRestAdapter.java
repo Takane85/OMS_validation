@@ -2,13 +2,20 @@ package com.ecomeerce.validation.infrastructure.adapter.in.rest;
 
 import com.ecomeerce.validation.application.port.in.CreateCustomerUseCase;
 import com.ecomeerce.validation.application.port.in.DeleteCustomerUseCase;
+import com.ecomeerce.validation.application.port.in.GetCustomerOrdersUseCase;
 import com.ecomeerce.validation.application.port.in.GetCustomerUseCase;
 import com.ecomeerce.validation.application.port.in.UpdateCustomerUseCase;
 import com.ecomeerce.validation.domain.model.Customer;
 import com.ecomeerce.validation.infrastructure.adapter.in.rest.dto.CustomerRequest;
 import com.ecomeerce.validation.infrastructure.adapter.in.rest.dto.CustomerResponse;
+import com.ecomeerce.validation.infrastructure.adapter.in.rest.dto.OrderResponse;
 import com.ecomeerce.validation.infrastructure.adapter.in.rest.mapper.CustomerRestMapper;
+import com.ecomeerce.validation.infrastructure.adapter.in.rest.mapper.OrderRestMapper;
+
 import jakarta.validation.Valid;
+
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,14 +28,16 @@ public class CustomerRestAdapter {
 	private final GetCustomerUseCase getCustomerUseCase;
 	private final UpdateCustomerUseCase updateCustomerUseCase;
 	private final DeleteCustomerUseCase deleteCustomerUseCase;
+	private final GetCustomerOrdersUseCase getCustomerOrdersUseCase;
 
 	public CustomerRestAdapter(CreateCustomerUseCase createCustomerUseCase, GetCustomerUseCase getCustomerUseCase,
-			UpdateCustomerUseCase updateCustomerUseCase, DeleteCustomerUseCase deleteCustomerUseCase) {
+			UpdateCustomerUseCase updateCustomerUseCase, DeleteCustomerUseCase deleteCustomerUseCase, GetCustomerOrdersUseCase getCustomerOrdersUseCase) {
 
 		this.createCustomerUseCase = createCustomerUseCase;
 		this.getCustomerUseCase = getCustomerUseCase;
 		this.updateCustomerUseCase = updateCustomerUseCase;
 		this.deleteCustomerUseCase = deleteCustomerUseCase;
+		this.getCustomerOrdersUseCase = getCustomerOrdersUseCase;
 	}
 
 	@PostMapping
@@ -62,6 +71,18 @@ public class CustomerRestAdapter {
 		deleteCustomerUseCase.delete(userId);
 
 		return ResponseEntity.noContent().build();
+	}
+	
+	@GetMapping("/{userId}/orders")
+	public ResponseEntity<List<OrderResponse>> getOrders(@PathVariable String userId){
+		
+		List<OrderResponse> orders = getCustomerOrdersUseCase
+				.getOrdersByUserId(userId)
+				.stream()
+				.map(OrderRestMapper::toResponse)
+				.toList();
+		
+		return ResponseEntity.ok(orders);
 	}
 
 }
