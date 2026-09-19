@@ -1,5 +1,8 @@
 package com.ecomeerce.validation.infrastructure.adapter.in.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import com.ecomeerce.validation.application.port.in.CreateCustomerUseCase;
 import com.ecomeerce.validation.application.port.in.DeleteCustomerUseCase;
 import com.ecomeerce.validation.application.port.in.GetCustomerOrdersUseCase;
@@ -20,6 +23,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(
+        name = "Customers",
+        description = "Customer management operations"
+)
 @RestController
 @RequestMapping("/api/v1/customers")
 public class CustomerRestAdapter {
@@ -40,6 +47,7 @@ public class CustomerRestAdapter {
 		this.getCustomerOrdersUseCase = getCustomerOrdersUseCase;
 	}
 
+	@Operation(summary = "Create Customer")
 	@PostMapping
 	public ResponseEntity<CustomerResponse> create(@Valid @RequestBody CustomerRequest request) {
 
@@ -48,6 +56,10 @@ public class CustomerRestAdapter {
 		return ResponseEntity.status(HttpStatus.CREATED).body(CustomerRestMapper.toResponse(customer));
 	}
 
+	@Operation(
+	        summary = "Get customer",
+	        description = "Retrieves customer information enriched with associated order references."
+	)
 	@GetMapping("/{userId}")
 	public ResponseEntity<CustomerResponse> getByUserId(@PathVariable String userId) {
 
@@ -56,6 +68,7 @@ public class CustomerRestAdapter {
 		return ResponseEntity.ok(CustomerRestMapper.toResponse(customer));
 	}
 
+	@Operation(summary = "Update customer")
 	@PutMapping("/{userId}")
 	public ResponseEntity<CustomerResponse> update(@PathVariable String userId,
 			@Valid @RequestBody CustomerRequest request) {
@@ -65,6 +78,7 @@ public class CustomerRestAdapter {
 		return ResponseEntity.ok(CustomerRestMapper.toResponse(customer));
 	}
 
+	@Operation(summary = "Delete customer")
 	@DeleteMapping("/{userId}")
 	public ResponseEntity<Void> delete(@PathVariable String userId) {
 
@@ -73,6 +87,10 @@ public class CustomerRestAdapter {
 		return ResponseEntity.noContent().build();
 	}
 	
+	@Operation(
+	        summary = "Get customer orders",
+	        description = "Retrieves orders associated with the customer."
+	)
 	@GetMapping("/{userId}/orders")
 	public ResponseEntity<List<OrderResponse>> getOrders(@PathVariable String userId){
 		
