@@ -5,11 +5,12 @@ import java.util.List;
 public record Order ( 
 		String orderRef,
         String userId,
+        String canal,
         String orderStatus,
-        String storeName,
-        String salesChannel,
-        String estimatedDeliveryDate,
-        List<Item> items
+        boolean marketPlace,
+        boolean giftRegistry,
+        List<String> itemIds,
+        String storeName
 		){
 
 }
