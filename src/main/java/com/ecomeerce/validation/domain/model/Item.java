@@ -1,9 +1,11 @@
 package com.ecomeerce.validation.domain.model;
 
 public record Item (
-	String itemID,
+	String itemId,
+	String skuId,
+	Integer quantity,
 	String displayName,
-	Integer quantity
+	String deliveryStatus
 		) {
 	
 }
